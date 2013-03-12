@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:py="http://genshi.edgewall.org/">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <link href="../templates/annonce_list.css" rel="stylesheet" type="text/css" />
+
+    <script src="../js/jquery.js"> </script>
+</head>
+
+<body>
+
+<table>
+    <tr>
+        <th>Titre</th>
+        <th>Prix</th>
+        <th>Surface</th>
+        <th>Description</th>
+        <th>Photos</th>
+    </tr>
+    <?python
+    n_imgs_list = [len(an.image_src_list) for an in annonce_list]
+    tr_class_list = []
+    for x in n_imgs_list:
+        if x > 2:
+            cl = 'plus_de_2'
+        else:
+            cl = 'moins_de_2'
+        tr_class_list.append(cl)
+    ?>
+    <tr py:for="an_idx, an in enumerate(annonce_list)" class="${tr_class_list[an_idx]}">
+        <td class="title"><a href="${an.full_url}">${an.full_title}</a></td>
+        <td class="price">${an.price}</td>
+        <td class="surface">${an.surface}</td>
+
+        <?python
+        img_list = an.image_src_list
+        n_imgs = len(img_list)
+        n_rows = n_imgs / 2
+        impair = 2*n_rows < n_imgs
+        tr_class = tr_class_list[an_idx]
+        bd_class = "bloc_description " + tr_class
+        bp_class = 'bloc_photos ' + tr_class
+
+        ?>
+        <td class="description">
+            <div class="${bd_class}">
+                <div class="bloc_description_internal">
+                    ${an.description}
+                </div>
+            </div>
+        </td>
+        <td class="photos">
+            <div class="${bp_class}">
+                <div class="bloc_photos_table">
+                    <py:for each="row_i in range(n_rows)">
+                        <div class="bloc_photos_row">
+                            <img class="photo" src="${img_list[2*row_i]}" />
+                            <img class="photo" src="${img_list[2*row_i+1]}" />
+                        </div>
+                    </py:for>
+                    
+                    <div py:if="impair" class="bloc_photos_row">
+                        <img class="photo" src="${img_list[n_imgs-1]}" />
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+
+</table>
+
+<script src="../js/annonce_list.js"> </script>
+
+</body>
+
+</html>
