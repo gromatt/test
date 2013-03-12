@@ -1,2 +1,2 @@
 ce fichier est juste la pour pouvoir commiter le repertoire (on ne peut pas commiter de repertoire vide j'ai l'impression)
-merci de garder les fichiers de resultat en local :-)
+merci de ne pas commiter les fichiers de resultat :-)
