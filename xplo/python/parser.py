@@ -14,11 +14,18 @@ class Obj:
 class Criteria_Description:
     def __init__(self):
 
-        self.on_sale = True
+        self.for_sale = True
         self.for_renting = False
         self.area_min = 35
         self.location = 'paris+13eme+75013'
 
+    def get_transaction_type_1(self):
+        if self.for_sale:
+            res = 'vente'
+        else:
+            res = 'location'
+
+        return res
 
 
 class Parser_1:
