@@ -1,0 +1,103 @@
+
+* {
+	font-size: 14px;
+	/*font-family: Verdana,Arial,'Bitstream Vera Sans',Helvetica,sans-serif;*/
+	font-family:Verdana;
+	font-weight: lighter;
+	/*line-height: 17px;*/
+	margin: 0 auto;
+	padding: 0 0 0 0;
+}
+
+table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+td, th {
+	border:1px solid black;
+}
+
+td.title {
+	width: 150px;
+	text-align: center;
+}
+
+td.price {
+	width: 130px;
+	text-align: center;
+}
+
+td.surface {
+	width: 80px;
+	text-align: center;
+}
+
+td.description {	
+	width: 240px;
+	padding-left: 5px;
+	overflow-y: auto;
+	margin: 0 0;
+	padding-top: 0px;
+}
+
+div.bloc_description {
+	font-size:12px;
+	box-sizing: border-box;
+	-moz-sbox-sizing: border-box;
+	padding: 5px 3px 3px 3px;
+	top: 15px;
+}
+
+div.bloc_description_internal {
+	position: relative;
+	font-size:12px;
+}
+
+div.bloc_description.moins_de_2 {
+	height: 160px;
+	overflow-y: auto;
+}
+
+div.bloc_description.plus_de_2 {
+	height: 320px;
+	overflow-y: auto;
+}
+
+div.bloc_photos {
+	width: 430px;
+}
+
+div.bloc_photos.plus_de_2 {
+	height: 320px;
+	overflow-y: auto;
+}
+
+div.bloc_photos.moins_de_2 {
+	height: 160px;
+}
+
+div.bloc_photos_table {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 4px;
+	margin-bottom: 4px;
+	width: 410px;
+	display: block;
+}
+
+div.bloc_photos_row {
+	display: block;
+	width: 410px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+img.photo {
+	display: inline-block;
+	width:200px;
+	max-height:150px;
+	/*margin-left: auto;
+	margin-right: auto;	*/
+}

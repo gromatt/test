@@ -19,3 +19,8 @@ $(function() {
 		return false;
 	});
 });
+
+function generate_conditions_html()
+{
+	
+}

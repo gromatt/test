@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:py="http://genshi.edgewall.org/">
+<head>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<script src="/js/jquery.js"> </script>
+
+    <script src="/js/all.js"> </script>
+
+</head>
+
+<body>
+
+<py:def function="select_attr(attribute='none')">
+    
+    <?python
+    attr_list = ['none', 'price', 'surface', 'description']
+    s_list = ['', '', '', '']
+    if attribute not in attr_list:
+    	idx = 0
+    else:
+    	idx = attr_list.index(attribute)
+    s_list[idx] = 'selected'
+    ?>
+
+    <select id="attribute">
+
+    	<py:for each="ii, x in enumerate(attr_list)">
+
+    		<option value="${x}" selected="${s_list[ii]}">${x}</option>
+
+    	</py:for>
+
+    </select>
+
+</py:def>
+
+<py:def function="select_boolean_function(condition='none')">
+    
+    <?python
+    c_list = ['none', 'contains', 'does_not_contain']
+    s_list = ['', '', '']
+    if condition not in c_list:
+    	idx = 0
+    else:
+    	idx = c_list.index(condition)
+    s_list[idx] = 'selected'
+    ?>
+
+    <select id="boolean_function">
+
+    	<py:for each="ii, x in enumerate(c_list)">
+
+    		<option value="${x}" selected="${s_list[ii]}">${x}</option>
+
+    	</py:for>
+
+    </select>
+
+</py:def>
+
+<h1>Add a condition</h1>
+
+<ol>
+	<li>${select_attr()}</li>
+	<li>${select_boolean_function()}</li>
+	<li><input type="text" id="condition_argument" /></li>
+</ol>
+
+<input class="standard_button" type="button" Value="Valider" onclick="add_condition()" />
+<input class="standard_button" type="button" value="Annuler" onclick="make_disappear_form_add_condition()" />
+
+</body>
+
+</html>

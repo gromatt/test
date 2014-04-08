@@ -12,7 +12,9 @@ def main_generate_annonce_list_html():
 
     criteria = parser.Criteria_Description()
 
-    annonce_list = parser.get_annonce_list_1(criteria, n_pages=1)
+    annonce_list = parser.get_annonce_list_1(criteria, n_pages=5)
+
+    print 'nb annonces', len(annonce_list)
 
     print 'data parsed, generating'
 

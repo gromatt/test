@@ -1,31 +1,75 @@
 
-import cherrypy, urllib
+import cherrypy
 
-from main import UrlBuilder
-import make_html, parse_expl
+import html_builder
 
-url_builder = UrlBuilder()
+from interface import *
 
 class HelloWorld:
 
-    def index(self, i):
+    def __init__(self):
+        
+        self.itf = Interface()
 
-    	print 'i', [i]
-    	url = url_builder.build_url(int(i))
-    	search_html = urllib.urlopen(url)
-    	an_list = parse_expl.parse_html_search_result(search_html)
-    	html = make_html.make_result_list_html(an_list)
-    	return html
+    def index(self):
 
-        return "Hello world!"
+        res = html_builder.make_main()
+
+        return res
+
     index.exposed = True
 
-    def get_results(self):
+    def get_conditions_html(self):
 
-    	pass
+        res = html_builder.make_conditions_html(itf=self.itf)
 
-obj = HelloWorld()
+        #print 'conditions html'
+        #print res
+        return res
 
-#cherrypy.config.update('config_cherrypy')
+    get_conditions_html.exposed = True
 
-cherrypy.quickstart(obj, '/', 'config_cherrypy')
+    def get_add_condition_form(self):
+
+        res = html_builder.make_add_condition_form()
+
+        print 'res', res
+        return res
+
+    get_add_condition_form.exposed = True
+
+    def add_condition(self, attribute, boolean_function, argument):
+
+        pass
+
+    add_condition.exposed = True
+
+
+cherrypy.config.update({'server.socket_host': 'localhost',
+                        'server.socket_port': 13502,
+                       })
+
+config =    {'/js/all.js':
+                {
+                    'tools.staticfile.on':True,
+                    'tools.staticfile.filename':'/home/mat/git_root/test/xplo/js/all.js',
+                },
+            '/js/jquery.js':
+                {
+                    'tools.staticfile.on':True,
+                    'tools.staticfile.filename':'/home/mat/git_root/test/xplo/js/jquery.js',
+                },
+            '/css/all.css':
+                {
+                    'tools.staticfile.on':True,
+                    'tools.staticfile.filename':'/home/mat/git_root/test/xplo/css/all.css',
+                },
+            '/':
+                {
+                    'tools.caching.on':True
+                }
+            }
+
+cherrypy.tree.mount(HelloWorld(), '/', config=config)
+cherrypy.engine.start()
+cherrypy.engine.block()

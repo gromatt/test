@@ -43,6 +43,11 @@ class Parser_1:
             search_url = url_builder.build_url_site_1(self.criteria, idx_page)
             search_html = urllib.urlopen(search_url).read()
 
+            print 'search_url', search_url
+            #f = open('bli.html', 'w')
+            #f.write(search_html)
+            #f.close()
+
             annonce_list = self.parse_search_result_page(search_html)
 
             res.extend(annonce_list)
@@ -51,27 +56,14 @@ class Parser_1:
 
     def parse_annonce_in_search_page(self, annonce_soup):
         '''renvoie un objet avec les champs :
-        short_title, surface, type, nb_rooms, full_url, price, nb_pics'''
+        short_title, full_url, price, nb_pics'''
     
         res = Obj()
         soup = annonce_soup
     
-        def get_sub_str(loc_soup, key, class_name):
-    
-            l = loc_soup.find_all(key, class_name)
-            assert len(l) == 1
-    
-            return l[0].string
-            
-        def get_info_bien(bien_soup):
-    
-            res.surface = get_sub_str(bien_soup, 'li', 'm2')
-            res.type = get_sub_str(bien_soup, 'li', 'type')
-            res.nb_rooms = get_sub_str(bien_soup, 'li', 'tn')        
-    
-        h2_list = soup.find_all('h2')
+        h2_list = soup.find_all('div', 'bloc-item-header')
         assert len(h2_list) == 1
-    
+
         a_list = h2_list[0].find_all('a')
         assert len(a_list) == 1
         a = a_list[0]
@@ -81,31 +73,25 @@ class Parser_1:
     
         res.full_url = self.root_url + res.href
     
-        total_list = soup.find_all('div', 'total')
-        assert len(total_list) == 1
-        a_list = total_list[0].find_all('a')
-        assert len(a_list) == 1
-    
-        res.price = a_list[0].string.replace(u'\xa0', ' ')
-    
-        res.nb_pics_str = soup.find_all('div', 'sprEI legende')[0].string
+        price_label_l = soup.find_all('span', 'price-label')
+
+        res.price = price_label_l[0].string.replace(u'\xa0', ' ')
+
+        res.nb_pics_str = soup.find_all('span', 'photo-count')[0].string
         res.nb_pics = int(res.nb_pics_str.split(' ')[0])
-    
-        bien_soup_list = soup.find_all('div', 'bien')
-        assert len(bien_soup_list) == 1
-        get_info_bien(bien_soup_list[0])
-    
+
         return res
-    
+
     def parse_annonce_own_page(self, own_url):
-        '''remplit les champs full_title, description, image_src_list'''
+        '''remplit les champs full_title, description, image_src_list,
+        surface, type, nb_rooms'''
     
         res = Obj()
-    
+
         f = urllib.urlopen(own_url)
         html = f.read()
         soup = BeautifulSoup(html)
-    
+        
         l = soup.find_all('div', id='bloc-vue-detail')
         assert len(l) == 1
         l2 = l[0].find_all('h1')
@@ -146,6 +132,17 @@ class Parser_1:
         l2 = l[0].find_all('img')
     
         res.image_src_list = [x['src'] for x in l2]
+
+        #4 : surface, nombre de pièces, type
+
+        bien = soup.find_all('div', 'bien')
+        li_list = bien[0].find_all('li')
+
+        assert len(li_list) == 3
+
+        res.type = li_list[0].string
+        res.nb_pieces = li_list[1].string
+        res.surface = li_list[2].string
     
         return res
     
@@ -159,13 +156,17 @@ class Parser_1:
         res.full_title = detailed_res.full_title
         res.description = detailed_res.description
         res.image_src_list = detailed_res.image_src_list
+
+        res.type = detailed_res.type
+        res.nb_pieces = detailed_res.nb_pieces
+        res.surface = detailed_res.surface
     
         return res
     
     def parse_search_result_page(self, html):
     
         soup = BeautifulSoup(html)
-        annonce_list = soup.find_all('div', class_='bloc-vue-in')
+        annonce_list = soup.find_all('div', class_='js-bloc-vue')
     
         res = []    
     
@@ -179,7 +180,6 @@ class Parser_1:
     
         return res
 
-
 def get_annonce_list_1(criteria, n_pages):
     #parsing pour le site 1
     ps = Parser_1(criteria)
@@ -188,4 +188,8 @@ def get_annonce_list_1(criteria, n_pages):
     return res
 
 if __name__ == '__main__':
+    
     parse_result_list()
+
+    #res = get_annonce_list_1('', 1)
+
