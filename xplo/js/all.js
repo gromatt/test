@@ -38,10 +38,26 @@ function add_condition()
     var arg_sel = $("input#condition_argument")[0];
     var argument = arg_sel.value;
 
-    $.ajax({url:"add_condition/" + attribute + "/" + boolean_function + "/" + argument,success:function(result)
+    $.ajax({url:"make_request/" + attribute + "/" + boolean_function + "/" + argument,success:function(result)
 	{
 		generate_conditions_html();
 
 		make_disappear_form_add_condition();
 	}});
+}
+
+function generate_annonce_list_html()
+{
+    $.ajax({url:"get_annonce_list_html/",success:function(result)
+    {
+        $("div#annonce_list").html(result);
+    }});
+}
+
+function refresh_request()
+{
+    $.ajax({url:"refresh_request/",success:function(result)
+    {
+        generate_annonce_list_html();
+    }});   
 }

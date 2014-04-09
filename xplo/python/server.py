@@ -33,17 +33,38 @@ class HelloWorld:
 
         res = html_builder.make_add_condition_form()
 
-        print 'res', res
+        #print 'res', res
         return res
 
     get_add_condition_form.exposed = True
 
     def add_condition(self, attribute, boolean_function, argument):
 
-        pass
+        self.itf.add_condition(attribute, boolean_function, argument)
 
     add_condition.exposed = True
 
+    def get_annonce_list_html(self):
+
+        print '########## in get_annonce_list_html'
+
+        annonce_list = self.itf.get_annonce_list_respecting_conditions()
+
+        res = html_builder.make_annonce_list_html(annonce_list)
+
+        print 'res', res
+
+        return res
+
+    get_annonce_list_html.exposed = True
+
+    def refresh_request(self):
+
+        self.itf.make_request('')
+
+        return 'ok'
+
+    refresh_request.exposed = True
 
 cherrypy.config.update({'server.socket_host': 'localhost',
                         'server.socket_port': 13502,
@@ -64,9 +85,14 @@ config =    {'/js/all.js':
                     'tools.staticfile.on':True,
                     'tools.staticfile.filename':'/home/mat/git_root/test/xplo/css/all.css',
                 },
+            '/css/annonce_list.css':
+                {
+                    'tools.staticfile.on':True,
+                    'tools.staticfile.filename':'/home/mat/git_root/test/xplo/css/annonce_list.css',
+                },
             '/':
                 {
-                    'tools.caching.on':True
+                    'tools.caching.on':False
                 }
             }
 

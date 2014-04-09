@@ -22,6 +22,7 @@ div#add_condition
 	padding-right: 20px;
 	padding-top: 10px;
 	padding-bottom: 20px;
+	display: none;
 }
 
 input.standard_button 
@@ -33,4 +34,17 @@ li
 {
 	margin-top: 10px;
 	margin-bottom: 10px;
+}
+
+table#conditions
+{
+	border-collapse: collapse;
+	margin-bottom: 15px;
+}
+
+table#conditions td, table#conditions th
+{
+	border: 1px solid black;
+	padding: 5px;
+	text-align: center;
 }
