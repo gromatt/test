@@ -28,3 +28,8 @@ def make_main():
 
 	stream = loader.load('main.html').generate()
 	return stream.render()
+
+def make_parameters_html():
+
+	stream = loader.load('parameters.html').generate()
+	return stream.render()

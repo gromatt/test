@@ -2,6 +2,14 @@
 
 import parser
 
+def is_int(s):
+
+    try:
+        x = float(s)
+        return int(x) == x
+    except:
+        return False
+
 class Condition:
 
     def __init__(self, attribute, condition_type, condition_argument):
@@ -41,10 +49,12 @@ class Interface: #c'est l'objet où vont être stockées toutes les données du 
     def __init__(self):
         
         self.condition_list = []
-        self.annonce_list = []
+        self.annonce_list = {}
 
         self.nb_filtered = []
         self.nb_filtered_computed = False
+
+        self.annonce_list_respecting_all_conditions = {}
 
     def add_condition(self, attribute, condition_type, condition_argument):
 
@@ -56,17 +66,27 @@ class Interface: #c'est l'objet où vont être stockées toutes les données du 
 
         self.condition_list.append(c)
 
-    def get_annonces(self):
+    def get_annonces(self, page_idx=1):
 
         criteria = parser.Criteria_Description()
 
-        self.annonce_list = parser.get_annonce_list_1(criteria, page_idx=1)
+        self.annonce_list[page_idx] = parser.get_annonce_list_1(criteria, page_idx=page_idx)
 
-        for ii, an in enumerate(self.annonce_list):
-            an.id = 'xplo_%d'%(ii+1)
+        for ii, an in enumerate(self.annonce_list[page_idx]):
+            an.id = 'xplo_page_%d_idx_%d'%(page_idx, ii+1)
 
         #for an in self.annonce_list:
             #print an.description
+
+    def get_all_current_annonces(self):
+
+        res = []
+
+        for page_idx in self.annonce_list:
+
+            res.extend(self.annonce_list[page_idx])
+
+        return res
 
     def refresh_condition_matrix(self):
 
@@ -76,14 +96,16 @@ class Interface: #c'est l'objet où vont être stockées toutes les données du 
 
         still_in = {}
 
-        for an in self.annonce_list:
+        all_annonces = self.get_all_current_annonces()
+
+        for an in all_annonces:
             still_in[an.id] = True
 
         for cond in self.condition_list:
 
             nb_filtered = 0
 
-            for an in self.annonce_list:
+            for an in all_annonces:
 
                 print 'an', an
 
@@ -96,12 +118,21 @@ class Interface: #c'est l'objet où vont être stockées toutes les données du 
 
             self.nb_filtered.append(nb_filtered)
 
-        self.annonce_list_respecting_all_conditions = [x for x in self.annonce_list if still_in[x.id]]
+        for page_idx in self.annonce_list:
+
+            l = [x for x in self.annonce_list[page_idx] if still_in[x.id]]
+            self.annonce_list_respecting_all_conditions[page_idx] = l
 
         self.nb_filtered_computed = True
 
-    def get_annonce_list_respecting_conditions(self):
+    def get_annonce_list_respecting_conditions(self, page_idx=0):
         
         self.refresh_condition_matrix()
 
-        return self.annonce_list_respecting_all_conditions
+        if page_idx != 0 and page_idx in self.annonce_list_respecting_all_conditions:
+            return self.annonce_list_respecting_all_conditions[page_idx]
+        else:
+            res = []
+            for ii, vv in self.annonce_list_respecting_all_conditions.iteritems():
+                res.extend(vv)
+            return res

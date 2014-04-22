@@ -38,7 +38,7 @@ function add_condition()
     var arg_sel = $("input#condition_argument")[0];
     var argument = arg_sel.value;
 
-    $.ajax({url:"make_request/" + attribute + "/" + boolean_function + "/" + argument,success:function(result)
+    $.ajax({url:"add_condition/" + attribute + "/" + boolean_function + "/" + argument,success:function(result)
 	{
 		generate_conditions_html();
 
@@ -54,10 +54,37 @@ function generate_annonce_list_html()
     }});
 }
 
+function generate_annonce_list_html_of_page(i)
+{
+    $.ajax({url:"get_annonce_list_html/" + i,success:function(result)
+    {
+        $("div#annonce_list_page_"+i).html(result);
+    }});
+}
+
 function refresh_request()
 {
-    $.ajax({url:"refresh_request/",success:function(result)
+    var nb_pages = $("input#nb_pages")[0].value;
+
+    //alert(nb_pages);
+
+    for(var i = 1; i <= nb_pages; i++)
     {
-        generate_annonce_list_html();
-    }});   
+        //alert("in loop" + i);
+
+        $.ajax({url:"refresh_request_page_nb/" + i,success:function(result)
+        {
+            generate_conditions_html();
+
+            generate_annonce_list_html_of_page(i);
+        }});
+    }
+}
+
+function generate_parameters_html()
+{
+    $.ajax({url:"get_parameters_html/",success:function(result)
+    {
+        $("div#parameters").html(result);
+    }});
 }

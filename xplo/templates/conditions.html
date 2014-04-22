@@ -4,6 +4,8 @@
 
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
+    <link href="/css/annonce_list.css" rel="stylesheet" type="text/css" />
+
 	<link href="/css/all.css" rel="stylesheet" type="text/css" />
 
 	<script src="/js/jquery.js"> </script>
@@ -15,35 +17,38 @@
 <body>
 
 <?python
-
-x = dir(itf)
 n_conds = len(itf.condition_list)
+
+if itf.nb_filtered_computed:
+    nb_filtered = ['%d'%x for x in itf.nb_filtered]
+else:
+    nb_filtered = [''] * n_conds
 ?>
 
-<table id="conditions">
+<table id="table_conditions">
 
     <tr>
         <th>Attribute name</th>
         <th>Condition type</th>
         <th>Condition argument</th>
+        <th>Nb filtered</th>
     </tr>
 
     <py:if test="n_conds > 0">
-        <py:for each="c in itf.condition_list">
+        <py:for each="ii, c in enumerate(itf.condition_list)">
     
             <tr>            
                 <td>${c.attribute}</td>
                 <td>${c.condition_type}</td>
                 <td>${c.condition_argument}</td>
+                <td>${nb_filtered[ii]}</td>    
             </tr>
-    
         </py:for>
     </py:if>
 
 </table>
  
-<input type="button" value="Add condition" onclick="generate_form_add_condition()" />
-<input type="button" value="Refresh request" onclick="refresh_request()" />
+<input type="button" class="simple_button_right" value="Add condition" onclick="generate_form_add_condition()" />
 
 </body>
 </html>

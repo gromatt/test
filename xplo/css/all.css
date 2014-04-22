@@ -1,3 +1,22 @@
+* {
+	font-size: 14px;
+	/*font-family: Verdana,Arial,'Bitstream Vera Sans',Helvetica,sans-serif;*/
+	font-family:Verdana;
+	font-weight: lighter;
+	/*line-height: 17px;*/
+	margin: 0 auto;
+	padding: 0 0 0 0;
+}
+
+table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+td, th {
+	border:1px solid black;
+}
  
 div#ecran_gris 
 {
@@ -18,8 +37,8 @@ div#add_condition
 	background-color: white;
 	z-index: 2;
 	position: fixed;
-	padding-left: 20px;
-	padding-right: 20px;
+	padding-left: 50px;
+	padding-right: 50px;
 	padding-top: 10px;
 	padding-bottom: 20px;
 	display: none;
@@ -36,15 +55,35 @@ li
 	margin-bottom: 10px;
 }
 
-table#conditions
+table#table_conditions
 {
 	border-collapse: collapse;
 	margin-bottom: 15px;
+	margin-top: 15px;
 }
 
-table#conditions td, table#conditions th
+table#table_conditions td, table#table_conditions th
 {
+	width: 800px;
 	border: 1px solid black;
 	padding: 5px;
 	text-align: center;
+}
+
+div#conditions
+{
+	margin: 0 auto;
+	width: 800px;	
+}
+
+input.simple_button_right
+{
+	float: right;
+}
+
+div#parameters
+{
+	margin: 0 auto;
+	margin-top: 40px;
+	width: 800px;
 }

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import urllib
+import urllib, os
 
 #facile à installer, il suffit de faire easy_install BeautifulSoup4
 from bs4 import BeautifulSoup
 
 #import xml.etree.ElementTree as ET
-from xml.etree.ElementTree import Element, SubElement, ElementTree
+from xml.etree.ElementTree import Element, SubElement, ElementTree, parse
 
 import datetime
 
@@ -47,6 +47,14 @@ def now_iso():
 
     return res
 
+def is_int(s):
+
+    try:
+        x = float(s)
+        return int(x) == x
+    except:
+        return False
+
 def strip_all_t_and_n(s):
     s2 = s.strip('\n')
     s3 = s2.strip('\t').strip('\n').strip('\t').strip('\n').strip('\t').strip('\n')
@@ -76,14 +84,22 @@ class Parser_1:
         self.root_url = url_builder.root_url_1
 
         self.cache_d = {}
+        self.read_all_from_cache()
 
     def read_all_from_cache(self):
 
-        cache_file = self.get_cache_file(1)
+        page_idx = 1
+
+        cache_file = self.get_cache_file(page_idx)
 
         while(os.path.exists(cache_file)):
 
-            return
+            an_list = self.read_from_cache(page_idx)
+
+            self.cache_d[page_idx] = an_list
+
+            page_idx += 1
+            cache_file = self.get_cache_file(page_idx)
 
     def get_cache_file(self, idx_page=1):
 
@@ -94,6 +110,10 @@ class Parser_1:
         return cache_file
 
     def get_annonce_list_at_page(self, idx_page=1):
+
+        if idx_page in self.cache_d:
+            res = self.cache_d[idx_page]
+            return res
 
         search_url = url_builder.build_url_site_1(self.criteria, idx_page)
         search_html = urllib.urlopen(search_url).read()
@@ -128,6 +148,8 @@ class Parser_1:
 
     def write_to_cache(self, idx_page, annonce_list):
 
+        self.cache_d[idx_page] = annonce_list
+
         cache_file = self.get_cache_file(idx_page)
 
         root = Element("annonce_list")
@@ -146,7 +168,7 @@ class Parser_1:
                 value = getattr(an, key)
 
                 if key == 'image_src_list':
-                    value = ';'.join(value)
+                    value = '@'.join(value)
                 elif type(value) is int:
                     value = '%d'%value
 
@@ -158,6 +180,40 @@ class Parser_1:
         f = open(cache_file, "w")
         ElementTree(root).write(f)
         f.close()
+
+    def read_from_cache(self, idx_page):
+
+        print 'reading from cache', idx_page
+
+        cache_file = self.get_cache_file(idx_page)
+
+        f = open(cache_file, "r")
+        tree = parse(f)
+        annonce_list_root = tree.getroot()
+
+        annonce_elem_list = annonce_list_root.getchildren()
+
+        res = []
+
+        for an_elem in annonce_elem_list:
+
+            an = Obj()
+
+            for attr in an_elem.getchildren():
+
+                key = attr.tag
+                value = attr.text
+
+                if key == 'image_src_list':
+                    value = attr.text.split('@')
+                elif is_int(value):
+                    value = int(value)
+
+                setattr(an, key, value)
+
+            res.append(an)
+
+        return res
 
     def parse_annonce_in_search_page(self, annonce_soup):
         '''renvoie un objet avec les champs :

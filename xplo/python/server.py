@@ -23,8 +23,9 @@ class HelloWorld:
 
         res = html_builder.make_conditions_html(itf=self.itf)
 
-        #print 'conditions html'
-        #print res
+        print 'conditions html'
+        print res
+
         return res
 
     get_conditions_html.exposed = True
@@ -44,19 +45,29 @@ class HelloWorld:
 
     add_condition.exposed = True
 
-    def get_annonce_list_html(self):
+    def get_annonce_list_html(self, page_idx=0):
+
+        page_idx = self.get_page_idx(page_idx)
 
         #print '########## in get_annonce_list_html'
 
-        annonce_list = self.itf.get_annonce_list_respecting_conditions()
+        annonce_list = self.itf.get_annonce_list_respecting_conditions(page_idx)
 
         res = html_builder.make_annonce_list_html(annonce_list)
 
-        #print 'res', res
+        #print 'res page %d'%page_idx, res
 
         return res
 
     get_annonce_list_html.exposed = True
+
+    def get_parameters_html(self):
+
+        res = html_builder.make_parameters_html()
+
+        return res
+
+    get_parameters_html.exposed = True
 
     def refresh_request(self):
 
@@ -65,6 +76,23 @@ class HelloWorld:
         return 'ok'
 
     refresh_request.exposed = True
+
+    def get_page_idx(self, page_idx):
+
+        if not is_int(page_idx):
+            raise Exception('bli')
+
+        return int(page_idx)
+
+    def refresh_request_page_nb(self, page_idx):
+
+        page_idx = self.get_page_idx(page_idx)
+
+        self.itf.get_annonces(page_idx)
+
+        return 'ok'
+
+    refresh_request_page_nb.exposed = True
 
 cherrypy.config.update({'server.socket_host': 'localhost',
                         'server.socket_port': 13502,
