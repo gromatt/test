@@ -46,13 +46,13 @@ class HelloWorld:
 
     def get_annonce_list_html(self):
 
-        print '########## in get_annonce_list_html'
+        #print '########## in get_annonce_list_html'
 
         annonce_list = self.itf.get_annonce_list_respecting_conditions()
 
         res = html_builder.make_annonce_list_html(annonce_list)
 
-        print 'res', res
+        #print 'res', res
 
         return res
 
@@ -60,7 +60,7 @@ class HelloWorld:
 
     def refresh_request(self):
 
-        self.itf.make_request('')
+        self.itf.get_annonces()
 
         return 'ok'
 

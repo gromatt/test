@@ -5,6 +5,11 @@ import urllib
 #facile à installer, il suffit de faire easy_install BeautifulSoup4
 from bs4 import BeautifulSoup
 
+#import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import Element, SubElement, ElementTree
+
+import datetime
+
 import url_builder.url_builder_do_not_commit as url_builder
 
 class Obj:
@@ -27,12 +32,79 @@ class Criteria_Description:
 
         return res
 
+def now_iso():
+
+    d = datetime.datetime.now()
+
+    yyyy = '%d'%d.year
+    mm_0 = '%d'%d.month
+    mm = mm_0.zfill(2)
+
+    dd_0 = '%d'%d.day
+    dd = dd_0.zfill(2)
+
+    res = '%s%s%s'%(yyyy, mm, dd)
+
+    return res
+
+def strip_all_t_and_n(s):
+    s2 = s.strip('\n')
+    s3 = s2.strip('\t').strip('\n').strip('\t').strip('\n').strip('\t').strip('\n')
+    s4 = s3.strip('\t').strip('\n').strip('\t')
+    return s4
+
+def indent(elem, level=0):
+
+    i = "\n" + level*"  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for elem in elem:
+            indent(elem, level+1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
 
 class Parser_1:
     # site n°1
     def __init__(self, criteria):
         self.criteria = criteria
         self.root_url = url_builder.root_url_1
+
+        self.cache_d = {}
+
+    def read_all_from_cache(self):
+
+        cache_file = self.get_cache_file(1)
+
+        while(os.path.exists(cache_file)):
+
+            return
+
+    def get_cache_file(self, idx_page=1):
+
+        iso = now_iso()
+
+        cache_file = 'cache/parser_%s_page_%d.xml'%(iso,idx_page)
+
+        return cache_file
+
+    def get_annonce_list_at_page(self, idx_page=1):
+
+        search_url = url_builder.build_url_site_1(self.criteria, idx_page)
+        search_html = urllib.urlopen(search_url).read()
+
+        print 'search_url', search_url
+
+        annonce_list = self.parse_search_result_page(search_html)
+
+        self.write_to_cache(idx_page, annonce_list)
+
+        return annonce_list
 
     def get_and_parse_results(self, n_pages=8):
 
@@ -53,6 +125,39 @@ class Parser_1:
             res.extend(annonce_list)
 
         return res
+
+    def write_to_cache(self, idx_page, annonce_list):
+
+        cache_file = self.get_cache_file(idx_page)
+
+        root = Element("annonce_list")
+
+        key_list = ['short_title', 'full_url', 'price', 'nb_pics', 'full_title', 'description', 
+                    'image_src_list', 'surface', 'type', 'nb_rooms']
+
+        #main = doc.createElement("annonce_list")
+
+        for ii, an in enumerate(annonce_list):
+
+            annonce = SubElement(root, 'annonce')
+
+            for key in key_list:
+
+                value = getattr(an, key)
+
+                if key == 'image_src_list':
+                    value = ';'.join(value)
+                elif type(value) is int:
+                    value = '%d'%value
+
+                vvv = SubElement(annonce, key)
+                vvv.text = value
+
+        indent(root)
+
+        f = open(cache_file, "w")
+        ElementTree(root).write(f)
+        f.close()
 
     def parse_annonce_in_search_page(self, annonce_soup):
         '''renvoie un objet avec les champs :
@@ -103,6 +208,7 @@ class Parser_1:
     
         res.full_title = l2[0].string.replace('\n', '').strip(' ').replace('  ', '')
         res.full_title = res.full_title.replace(u'\xa0', '')
+        res.full_title = strip_all_t_and_n(res.full_title)
     
         #2 : la description
     
@@ -140,10 +246,12 @@ class Parser_1:
 
         assert len(li_list) == 3
 
-        res.type = li_list[0].string
-        res.nb_pieces = li_list[1].string
-        res.surface = li_list[2].string
-    
+        res.type = strip_all_t_and_n(li_list[0].string)
+        res.nb_rooms = strip_all_t_and_n(li_list[1].string)
+        res.surface = strip_all_t_and_n(li_list[2].string)
+
+        print ['nb_rooms', res.nb_rooms]
+
         return res
     
     def parse_annonce_full(self, annonce_soup):
@@ -158,11 +266,11 @@ class Parser_1:
         res.image_src_list = detailed_res.image_src_list
 
         res.type = detailed_res.type
-        res.nb_pieces = detailed_res.nb_pieces
+        res.nb_rooms = detailed_res.nb_rooms
         res.surface = detailed_res.surface
     
         return res
-    
+
     def parse_search_result_page(self, html):
     
         soup = BeautifulSoup(html)
@@ -180,10 +288,10 @@ class Parser_1:
     
         return res
 
-def get_annonce_list_1(criteria, n_pages):
+def get_annonce_list_1(criteria, page_idx):
     #parsing pour le site 1
     ps = Parser_1(criteria)
-    res = ps.get_and_parse_results(n_pages)
+    res = ps.get_annonce_list_at_page(page_idx)
 
     return res
 
