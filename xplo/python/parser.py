@@ -94,6 +94,8 @@ class Parser_1:
 
         while(os.path.exists(cache_file)):
 
+            print 'reading', page_idx
+
             an_list = self.read_from_cache(page_idx)
 
             self.cache_d[page_idx] = an_list
@@ -182,8 +184,6 @@ class Parser_1:
         f.close()
 
     def read_from_cache(self, idx_page):
-
-        print 'reading from cache', idx_page
 
         cache_file = self.get_cache_file(idx_page)
 

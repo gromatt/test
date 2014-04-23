@@ -58,7 +58,27 @@ function generate_annonce_list_html_of_page(i)
 {
     $.ajax({url:"get_annonce_list_html/" + i,success:function(result)
     {
-        $("div#annonce_list_page_"+i).html(result);
+        $("div#annonce_list").html(result);
+    }});
+}
+
+function append_to_table_annonce_list_html_of_page(i)
+{
+    $.ajax({url:"get_annonce_list_html/" + i,success:function(result)
+    {
+        //$("div#annonce_list_tmp").html(result);
+
+        //ensuite j'appende le resultat a la table existante
+        var cur_table = $('div#annonce_list table')[0];
+
+        $("tr:not(:first-child)", result).each(function(index)
+        {
+            //if(index == 0)
+            //{
+            var last_tr = $("tr", cur_table).filter(':last-child')[0];
+            $(cur_table).append(this);
+            //}
+        });
     }});
 }
 
@@ -66,19 +86,36 @@ function refresh_request()
 {
     var nb_pages = $("input#nb_pages")[0].value;
 
-    //alert(nb_pages);
-
-    for(var i = 1; i <= nb_pages; i++)
+    for(var my_idx = 1; my_idx <= nb_pages; my_idx++)
     {
-        //alert("in loop" + i);
-
-        $.ajax({url:"refresh_request_page_nb/" + i,success:function(result)
+        $.ajax({url:"refresh_request_page_nb/" + my_idx,
+                async: false, // sinon il incremente my_idx ...
+        success:function(result)
         {
+            update_nb_of_annoucements_found();
+
             generate_conditions_html();
 
-            generate_annonce_list_html_of_page(i);
+            if(my_idx == 1)
+            {
+                generate_annonce_list_html_of_page(1);
+            }
+            else
+            {
+                append_to_table_annonce_list_html_of_page(my_idx);
+            }
+
         }});
+
     }
+}
+
+function update_nb_of_annoucements_found()
+{
+    $.ajax({url:"get_nb_results_html/",success:function(result)
+    {
+        $("div#nb_results").html(result);
+    }});   
 }
 
 function generate_parameters_html()

@@ -23,6 +23,9 @@ class Condition:
         attribute_value = getattr(annonce, self.attribute)
         arg = self.condition_argument
 
+        attribute_value = attribute_value.lower()
+        arg = arg.lower()
+
         if self.condition_type == 'contains':
             if attribute_value.find(arg) != -1:
                 return True
@@ -56,24 +59,33 @@ class Interface: #c'est l'objet où vont être stockées toutes les données du 
 
         self.annonce_list_respecting_all_conditions = {}
 
+        self.criteria = parser.Criteria_Description()
+        self.parser_1 = parser.Parser_1(self.criteria)
+
     def add_condition(self, attribute, condition_type, condition_argument):
 
-        n_conditions = len(self.condition_list)
+        t = condition_argument.split('@')
 
-        c = Condition(attribute, condition_type, condition_argument)
+        for arg_i in t:
+            c = Condition(attribute, condition_type, arg_i)
 
-        c.id = 'condition_%d'%(n_conditions+1)
+            n_conditions = len(self.condition_list)
+            c.id = 'condition_%d'%(n_conditions+1)
 
-        self.condition_list.append(c)
+            self.condition_list.append(c)
 
-    def get_annonces(self, page_idx=1):
+        self.nb_filtered_computed = False
 
-        criteria = parser.Criteria_Description()
+    def get_annonces(self, page_idx=1):        
 
-        self.annonce_list[page_idx] = parser.get_annonce_list_1(criteria, page_idx=page_idx)
+        ll = self.parser_1.get_annonce_list_at_page(page_idx)
 
-        for ii, an in enumerate(self.annonce_list[page_idx]):
-            an.id = 'xplo_page_%d_idx_%d'%(page_idx, ii+1)
+        for ii, an in enumerate(ll):
+            an.id = 'page_%d_idx_%d'%(page_idx, ii+1)
+
+        self.annonce_list[page_idx] = ll
+
+        self.nb_filtered_computed = False
 
         #for an in self.annonce_list:
             #print an.description
@@ -106,8 +118,6 @@ class Interface: #c'est l'objet où vont être stockées toutes les données du 
             nb_filtered = 0
 
             for an in all_annonces:
-
-                print 'an', an
 
                 xx = cond.condition_applies(an)
 

@@ -4,6 +4,11 @@ td.title {
 	text-align: center;
 }
 
+td.an_id {
+	width: 100px;
+	text-align: center;
+}
+
 td.price {
 	width: 130px;
 	text-align: center;

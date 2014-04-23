@@ -23,8 +23,8 @@ class HelloWorld:
 
         res = html_builder.make_conditions_html(itf=self.itf)
 
-        print 'conditions html'
-        print res
+        #print 'conditions html'
+        #print res
 
         return res
 
@@ -90,9 +90,23 @@ class HelloWorld:
 
         self.itf.get_annonces(page_idx)
 
+        print 'got annonces page ' + str(page_idx)
+        ll = self.itf.annonce_list[page_idx]
+        print 'id_list', [an.id for an in ll]
+
         return 'ok'
 
     refresh_request_page_nb.exposed = True
+
+    def get_nb_results_html(self):
+
+        ll = self.itf.get_annonce_list_respecting_conditions()
+
+        res = 'Result : %d results'%len(ll)
+
+        return res
+
+    get_nb_results_html.exposed = True
 
 cherrypy.config.update({'server.socket_host': 'localhost',
                         'server.socket_port': 13502,

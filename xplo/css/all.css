@@ -44,7 +44,7 @@ div#add_condition
 	display: none;
 }
 
-input.standard_button 
+input.standard_button
 {
 	float: right;
 }
@@ -73,7 +73,7 @@ table#table_conditions td, table#table_conditions th
 div#conditions
 {
 	margin: 0 auto;
-	width: 800px;	
+	width: 800px;
 }
 
 input.simple_button_right
@@ -83,7 +83,19 @@ input.simple_button_right
 
 div#parameters
 {
-	margin: 0 auto;
-	margin-top: 40px;
-	width: 800px;
+	/*margin: 0 auto;
+	margin-top: 40px;*/
+	/*width: 800px;*/
+}
+
+div.div_annonce_list
+{
+	/*width: 1000px;*/
+}
+
+div#main_cadre
+{
+    width: 1100px;
+    margin: 0 auto;
+    /*height: 1000px;*/
 }

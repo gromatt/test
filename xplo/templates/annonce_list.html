@@ -12,6 +12,7 @@
 
 <table>
     <tr>
+        <th>Id</th>
         <th>Titre</th>
         <th>Prix</th>
         <th>Surface</th>
@@ -29,6 +30,7 @@
         tr_class_list.append(cl)
     ?>
     <tr py:for="an_idx, an in enumerate(annonce_list)" class="${tr_class_list[an_idx]}">
+        <td class="an_id">${an.id}</td>
         <td class="title"><a href="${an.full_url}">${an.full_title}</a></td>
         <td class="price">${an.price}</td>
         <td class="surface">${an.surface}</td>
