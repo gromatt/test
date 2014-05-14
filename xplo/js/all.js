@@ -125,3 +125,19 @@ function generate_parameters_html()
         $("div#parameters").html(result);
     }});
 }
+
+function change_filter_visibility(filter_id)
+{
+    //je cherche le div qui correspond à ce filter
+
+    var my_global_div = $("div#div_filter_" + div_filter)[0];
+
+    // le plus à changer en moins + la visibilité à changer
+
+    var title_bar = $("div.div_filter_title_bar", my_global_div)[0];
+    var the_span = $("span", title_bar)[0];
+
+    alert(the_span.innerHTML);
+
+    var the_
+}

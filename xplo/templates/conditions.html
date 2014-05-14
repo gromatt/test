@@ -16,39 +16,64 @@
 
 <body>
 
-<?python
-n_conds = len(itf.condition_list)
+<py:for each="jj, ff in enumerate(itf.filter_list)">
 
-if itf.nb_filtered_computed:
-    nb_filtered = ['%d'%x for x in itf.nb_filtered]
-else:
-    nb_filtered = [''] * n_conds
-?>
+    <div class="div_filter" id=${"div_filter_" + ff.id}>
 
-<table id="table_conditions">
+        <?python
+        n_conds = len(ff.condition_list)
 
-    <tr>
-        <th>Attribute name</th>
-        <th>Condition type</th>
-        <th>Condition argument</th>
-        <th>Nb filtered</th>
-    </tr>
+        if ff.nb_filtered_computed:
+            nb_filtered_l = ['%d'%x for x in ff.nb_filtered_l]
+        else:
+            nb_filtered_l = [''] * n_conds
+        ?>
 
-    <py:if test="n_conds > 0">
-        <py:for each="ii, c in enumerate(itf.condition_list)">
-    
-            <tr>            
-                <td>${c.attribute}</td>
-                <td>${c.condition_type}</td>
-                <td>${c.condition_argument}</td>
-                <td>${nb_filtered[ii]}</td>    
-            </tr>
-        </py:for>
-    </py:if>
+        <div class="div_filter_title_bar" onclick="change_filter_visibility('${ff.id}')">
+            <span class="plus_ou_moins">
+                <py:if test="ff.detail_is_visible">
+                    -
+                </py:if>
+                <py:if test="not ff.detail_is_visible">
+                    +
+                </py:if>
+            </span>
+            <h2>Filter nb ${jj} (${ff.nb_filtered_total})</h2>
+        </div>
 
-</table>
- 
-<input type="button" class="simple_button_right" value="Add condition" onclick="generate_form_add_condition()" />
+        <div class="div_filter_internal">
+
+            <table class="table_conditions">
+
+                <tr>
+                    <th>Attribute name</th>
+                    <th>Condition type</th>
+                    <th>Condition argument</th>
+                    <th>Nb filtered</th>
+                </tr>
+
+                <py:if test="n_conds > 0">
+                    <py:for each="ii, c in enumerate(ff.condition_list)">
+
+                        <tr>
+                            <td>${c.attribute}</td>
+                            <td>${c.condition_type}</td>
+                            <td>${c.condition_argument}</td>
+                            <td>${nb_filtered[ii]}</td>    
+                        </tr>
+                    </py:for>
+                </py:if>
+
+            </table>
+
+            <input type="button" class="simple_button_right" value="Add condition" onclick="generate_form_add_condition()" />
+        </div>
+
+    </div>
+
+</py:for>
+
+<input type="button" class="simple_button_left" value="Add Filter" onclick="generate_form_add_filter()" />
 
 </body>
 </html>
